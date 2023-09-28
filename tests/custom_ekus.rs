@@ -1,9 +1,13 @@
-#![cfg(all(feature = "alloc", any(feature = "ring", feature = "aws_lc_rs")))]
+#![cfg(all(feature = "alloc", any(feature = "ring", feature = "aws_lc_rs", feature = "rust_crypto")))]
 
 use core::time::Duration;
 
 use pki_types::{CertificateDer, UnixTime};
 use webpki::{extract_trust_anchor, KeyUsage};
+
+use wasm_bindgen_test::*;
+
+wasm_bindgen_test_configure!(run_in_browser);
 
 fn check_cert(
     ee: &[u8],
@@ -34,6 +38,7 @@ fn check_cert(
 }
 
 #[test]
+#[wasm_bindgen_test]
 pub fn verify_custom_eku_mdoc() {
     let err = Err(webpki::Error::RequiredEkuNotFound);
     let time = UnixTime::since_unix_epoch(Duration::from_secs(1_609_459_200)); //  Jan 1 01:00:00 CET 2021
@@ -49,11 +54,13 @@ pub fn verify_custom_eku_mdoc() {
 }
 
 #[test]
+#[wasm_bindgen_test]
 pub fn verify_custom_eku_client() {
     let time = UnixTime::since_unix_epoch(Duration::from_secs(0x1fed_f00d));
 
     let ee = include_bytes!("client_auth/cert_with_no_eku_accepted_for_client_auth.ee.der");
     let ca = include_bytes!("client_auth/cert_with_no_eku_accepted_for_client_auth.ca.der");
+
     check_cert(ee, ca, KeyUsage::client_auth(), time, Ok(()));
 
     let ee = include_bytes!("client_auth/cert_with_both_ekus_accepted_for_client_auth.ee.der");

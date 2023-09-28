@@ -14,7 +14,12 @@
 
 use pki_types::CertificateDer;
 
+use wasm_bindgen_test::*;
+
+wasm_bindgen_test_configure!(run_in_browser);
+
 #[test]
+#[wasm_bindgen_test]
 fn test_cert_v1_unsupported() {
     // Check with `openssl x509 -text -noout -in cert_v1.der -inform DER`
     // to verify this is a correct version 1 certificate.

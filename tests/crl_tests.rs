@@ -1,5 +1,9 @@
 use webpki::{BorrowedCertRevocationList, CertRevocationList, DerTypeId, Error};
 
+use wasm_bindgen_test::*;
+
+wasm_bindgen_test_configure!(run_in_browser);
+
 const REVOKED_SERIAL: &[u8] = &[0x03, 0xAE, 0x51, 0xDB, 0x51, 0x15, 0x5A, 0x3C];
 
 const REVOKED_SERIAL_NEGATIVE: &[u8] = &[0xfd, 0x78, 0xa8, 0x4e];
@@ -10,6 +14,7 @@ const REVOKED_SERIAL_NEGATIVE: &[u8] = &[0xfd, 0x78, 0xa8, 0x4e];
 const REVOKED_SERIAL_WITH_TOP_BIT_SET: &[u8] = &[0x00, 0x80, 0xfe, 0xed, 0xf0, 0x0d];
 
 #[test]
+#[wasm_bindgen_test]
 fn parse_valid_crl() {
     // We should be able to parse a valid CRL without error, and find the revoked serial.
     let crl = include_bytes!("crls/crl.valid.der");
@@ -24,6 +29,7 @@ fn parse_valid_crl() {
 }
 
 #[test]
+#[wasm_bindgen_test]
 fn parse_empty_crl() {
     // We should be able to parse an empty CRL without error, and find no revoked certs.
     let crl = include_bytes!("crls/crl.empty.der");
@@ -39,6 +45,7 @@ fn parse_empty_crl() {
 }
 
 #[test]
+#[wasm_bindgen_test]
 fn parse_mismatched_sigalg_crl() {
     // Parsing a CRL with a mismatched outer/inner signature algorithm should fail.
     let crl = include_bytes!("crls/crl.mismatched.sigalg.der");
@@ -47,6 +54,7 @@ fn parse_mismatched_sigalg_crl() {
 }
 
 #[test]
+#[wasm_bindgen_test]
 fn parse_bad_this_update_crl() {
     // Parsing a CRL with an invalid this update time should error.
     let crl = include_bytes!("crls/crl.invalid.this.update.time.der");
@@ -55,6 +63,7 @@ fn parse_bad_this_update_crl() {
 }
 
 #[test]
+#[wasm_bindgen_test]
 fn parse_missing_next_update_crl() {
     // Parsing a CRL with a missing next update time should error.
     let crl = include_bytes!("crls/crl.missing.next.update.der");
@@ -63,6 +72,7 @@ fn parse_missing_next_update_crl() {
 }
 
 #[test]
+#[wasm_bindgen_test]
 fn parse_wrong_version_crl() {
     // Parsing a CRL with an unsupported version should error.
     let crl = include_bytes!("crls/crl.wrong.version.der");
@@ -71,6 +81,7 @@ fn parse_wrong_version_crl() {
 }
 
 #[test]
+#[wasm_bindgen_test]
 fn parse_missing_exts_crl() {
     // Parsing a CRL with no list extensions should error.
     let crl = include_bytes!("crls/crl.missing.exts.der");
@@ -79,6 +90,7 @@ fn parse_missing_exts_crl() {
 }
 
 #[test]
+#[wasm_bindgen_test]
 fn parse_delta_crl() {
     // Parsing a CRL with an extension indicating its a delta CRL should error.
     let crl = include_bytes!("crls/crl.delta.der");
@@ -87,6 +99,7 @@ fn parse_delta_crl() {
 }
 
 #[test]
+#[wasm_bindgen_test]
 fn parse_unknown_crit_ext_crl() {
     // Parsing a CRL with an unknown critical list extension should error.
     let crl = include_bytes!("crls/crl.unknown.crit.ext.der");
@@ -95,6 +108,7 @@ fn parse_unknown_crit_ext_crl() {
 }
 
 #[test]
+#[wasm_bindgen_test]
 fn parse_negative_crl_number_crl() {
     // Parsing a CRL with a negative CRL number should error.
     let crl = include_bytes!("crls/crl.negative.crl.number.der");
@@ -103,6 +117,7 @@ fn parse_negative_crl_number_crl() {
 }
 
 #[test]
+#[wasm_bindgen_test]
 fn parse_too_long_crl_number_crl() {
     // Parsing a CRL with a CRL number > 20 octets should error.
     let crl = include_bytes!("crls/crl.too.long.crl.number.der");
@@ -111,6 +126,7 @@ fn parse_too_long_crl_number_crl() {
 }
 
 #[test]
+#[wasm_bindgen_test]
 fn parse_entry_negative_serial_crl() {
     let crl = include_bytes!("crls/crl.negative.serial.der");
     let crl = BorrowedCertRevocationList::from_der(&crl[..]).unwrap();
@@ -139,6 +155,7 @@ fn parse_entry_negative_serial_crl() {
 }
 
 #[test]
+#[wasm_bindgen_test]
 fn parse_entry_topbit_serial_crl() {
     let crl = include_bytes!("crls/crl.topbit.serial.der");
     let crl = BorrowedCertRevocationList::from_der(&crl[..]).unwrap();
@@ -159,6 +176,7 @@ fn parse_entry_topbit_serial_crl() {
 }
 
 #[test]
+#[wasm_bindgen_test]
 fn parse_entry_without_exts_crl() {
     // Parsing a CRL that includes a revoked entry that has no extensions shouldn't error, and we
     // should find the expected revoked certificate.
@@ -174,6 +192,7 @@ fn parse_entry_without_exts_crl() {
 }
 
 #[test]
+#[wasm_bindgen_test]
 fn parse_entry_with_empty_exts_seq() {
     // Parsing a CRL that has a revoked cert entry with an empty extensions sequence shouldn't error.
     let crl = include_bytes!("crls/crl.entry.empty.ext.seq.der");
@@ -188,6 +207,7 @@ fn parse_entry_with_empty_exts_seq() {
 }
 
 #[test]
+#[wasm_bindgen_test]
 fn parse_entry_unknown_crit_ext_crl() {
     // Parsing a CRL that includes a revoked entry that has an unknown critical extension shouldn't
     // error up-front because the problem is with a revoked cert entry.
@@ -208,6 +228,7 @@ fn parse_entry_unknown_crit_ext_crl() {
 }
 
 #[test]
+#[wasm_bindgen_test]
 fn parse_entry_invalid_reason_crl() {
     // Parsing a CRL that includes a revoked entry that has an unknown revocation reason shouldn't
     // error up-front since the problem is with a revoked entry.
@@ -227,6 +248,7 @@ fn parse_entry_invalid_reason_crl() {
 }
 
 #[test]
+#[wasm_bindgen_test]
 fn parse_entry_invalidity_date_crl() {
     // Parsing a CRL that includes a revoked entry that has an invalidity date ext shouldn't error
     // and we should find the expected revoked cert with an invalidity date.
@@ -252,6 +274,7 @@ fn parse_entry_invalidity_date_crl() {
 }
 
 #[test]
+#[wasm_bindgen_test]
 fn parse_entry_indirect_issuer_crl() {
     // Parsing a CRL that includes a revoked entry that has a issuer certificate extension
     // shouldn't error up-front - we expect the error to be surfaced when we iterate the revoked

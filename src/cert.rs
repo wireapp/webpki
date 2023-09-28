@@ -26,7 +26,7 @@ pub struct Cert<'a> {
     pub(crate) serial: untrusted::Input<'a>,
     pub(crate) signed_data: SignedData<'a>,
     pub(crate) issuer: untrusted::Input<'a>,
-    pub(crate) validity: untrusted::Input<'a>,
+    pub validity: untrusted::Input<'a>,
     pub(crate) subject: untrusted::Input<'a>,
     pub(crate) spki: untrusted::Input<'a>,
 
@@ -45,7 +45,7 @@ pub struct Cert<'a> {
 }
 
 impl<'a> Cert<'a> {
-    pub(crate) fn from_der(cert_der: untrusted::Input<'a>) -> Result<Self, Error> {
+    pub fn from_der(cert_der: untrusted::Input<'a>) -> Result<Self, Error> {
         let (tbs, signed_data) =
             cert_der.read_all(Error::TrailingData(DerTypeId::Certificate), |cert_der| {
                 der::nested(
@@ -347,7 +347,12 @@ mod tests {
     #[cfg(feature = "alloc")]
     use crate::subject_name::GeneralName;
 
+    use wasm_bindgen_test::*;
+
+    wasm_bindgen_test_configure!(run_in_browser);
+
     #[test]
+    #[wasm_bindgen_test]
     // Note: cert::parse_cert is crate-local visibility, and EndEntityCert doesn't expose the
     //       inner Cert, or the serial number. As a result we test that the raw serial value
     //       is read correctly here instead of in tests/integration.rs.
@@ -368,6 +373,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     #[cfg(feature = "alloc")]
     fn test_crl_distribution_point_netflix() {
         let ee = include_bytes!("../tests/netflix/ee.der");
@@ -435,6 +441,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     #[cfg(feature = "alloc")]
     fn test_crl_distribution_point_with_reasons() {
         let der = include_bytes!("../tests/crl_distrib_point/with_reasons.der");
@@ -474,6 +481,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     #[cfg(feature = "alloc")]
     fn test_crl_distribution_point_with_crl_issuer() {
         let der = include_bytes!("../tests/crl_distrib_point/with_crl_issuer.der");
@@ -500,6 +508,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     #[cfg(feature = "alloc")]
     fn test_crl_distribution_point_bad_der() {
         // Created w/
@@ -518,6 +527,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     #[cfg(feature = "alloc")]
     fn test_crl_distribution_point_only_reasons() {
         // Created w/
@@ -536,6 +546,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     #[cfg(feature = "alloc")]
     fn test_crl_distribution_point_name_relative_to_issuer() {
         let der = include_bytes!("../tests/crl_distrib_point/dp_name_relative_to_issuer.der");
@@ -574,6 +585,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     #[cfg(feature = "alloc")]
     fn test_crl_distribution_point_unknown_name_tag() {
         // Created w/
@@ -601,6 +613,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     #[cfg(feature = "alloc")]
     fn test_crl_distribution_point_multiple() {
         let der = include_bytes!("../tests/crl_distrib_point/multiple_distribution_points.der");

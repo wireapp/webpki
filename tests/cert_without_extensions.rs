@@ -14,7 +14,12 @@
 
 use pki_types::CertificateDer;
 
+use wasm_bindgen_test::*;
+
+wasm_bindgen_test_configure!(run_in_browser);
+
 #[test]
+#[wasm_bindgen_test]
 fn cert_without_extensions_test() {
     // Check the certificate is valid with
     // `openssl x509 -in cert_without_extensions.der -inform DER -text -noout`

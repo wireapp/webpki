@@ -183,7 +183,12 @@ const DAYS_BEFORE_UNIX_EPOCH_AD: u64 = 1969 * 365 + 477;
 mod tests {
     use super::*;
 
+    use wasm_bindgen_test::*;
+
+    wasm_bindgen_test_configure!(run_in_browser);
+
     #[test]
+    #[wasm_bindgen_test]
     fn test_days_before_unix_epoch() {
         assert_eq!(
             DAYS_BEFORE_UNIX_EPOCH_AD,
@@ -192,6 +197,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn test_days_before_year_since_unix_epoch() {
         assert_eq!(Ok(0), days_before_year_since_unix_epoch(UNIX_EPOCH_YEAR));
         assert_eq!(
@@ -205,6 +211,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn test_days_in_month() {
         assert_eq!(days_in_month(2017, 1), 31);
         assert_eq!(days_in_month(2017, 2), 28);
@@ -227,6 +234,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn test_time_from_ymdhms_utc() {
         // 1969-12-31 00:00:00
         assert_eq!(

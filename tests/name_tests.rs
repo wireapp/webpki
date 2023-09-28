@@ -1,9 +1,14 @@
 use webpki::DnsNameRef;
 
+use wasm_bindgen_test::*;
+
+wasm_bindgen_test_configure!(run_in_browser);
+
 fn compile_time_assert_send<T: Send>() {}
 fn compile_time_assert_sync<T: Sync>() {}
 
 #[test]
+#[wasm_bindgen_test]
 fn test_dns_name_ref_traits() {
     compile_time_assert_send::<DnsNameRef>();
     compile_time_assert_sync::<DnsNameRef>();
@@ -31,6 +36,7 @@ fn test_dns_name_ref_traits() {
 
 #[cfg(feature = "alloc")]
 #[test]
+#[wasm_bindgen_test]
 fn test_dns_name_traits() {
     use webpki::DnsName;
 

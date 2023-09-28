@@ -526,6 +526,10 @@ pub(crate) fn parse_ipv6_address(ip_address_: &[u8]) -> Result<IpAddrRef, AddrPa
 mod tests {
     use super::*;
 
+    use wasm_bindgen_test::*;
+
+    wasm_bindgen_test_configure!(run_in_browser);
+
     const fn ipv4_address(
         ip_address: &[u8],
         octets: [u8; 4],
@@ -567,6 +571,7 @@ mod tests {
     ];
 
     #[test]
+    #[wasm_bindgen_test]
     fn parse_ipv4_address_test() {
         for &(ip_address, expected_result) in IPV4_ADDRESSES {
             assert_eq!(parse_ipv4_address(ip_address), expected_result,);
@@ -782,6 +787,7 @@ mod tests {
     ];
 
     #[test]
+    #[wasm_bindgen_test]
     fn parse_ipv6_address_test() {
         for &(ip_address, expected_result) in IPV6_ADDRESSES {
             assert_eq!(parse_ipv6_address(ip_address), expected_result,);
@@ -789,6 +795,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn try_from_ascii_ip_address_test() {
         const IP_ADDRESSES: &[(&[u8], Result<IpAddrRef, AddrParseError>)] = &[
             // Valid IPv4 addresses
@@ -829,6 +836,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn try_from_ascii_str_ip_address_test() {
         const IP_ADDRESSES: &[(&str, Result<IpAddrRef, AddrParseError>)] = &[
             // Valid IPv4 addresses
@@ -866,6 +874,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn str_from_ip_address_ref_test() {
         let ip_addresses = vec![
             // IPv4 addresses
@@ -885,6 +894,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn u8_array_from_ip_address_ref_test() {
         let ip_addresses = vec![
             // IPv4 addresses
@@ -907,6 +917,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn presented_id_matches_constraint_ipv4_test() {
         let names_and_constraints = vec![
             (
@@ -1001,6 +1012,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn presented_id_matches_constraint_ipv6_test() {
         let names_and_constraints = vec![
             (
@@ -1162,6 +1174,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn test_presented_id_matches_reference_id() {
         assert!(!presented_id_matches_reference_id(
             untrusted::Input::from(&[]),
@@ -1200,6 +1213,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn presented_id_matches_constraint_rejects_incorrect_length_arguments() {
         // wrong length names
         assert_eq!(
@@ -1287,7 +1301,12 @@ mod tests {
 mod alloc_tests {
     use super::*;
 
+    use wasm_bindgen_test::*;
+
+    wasm_bindgen_test_configure!(run_in_browser);
+
     #[test]
+    #[wasm_bindgen_test]
     fn as_ref_ip_address_test() {
         assert_eq!(
             IpAddr::V4(String::from("127.0.0.1"), [127, 0, 0, 1]).as_ref(),
@@ -1304,6 +1323,7 @@ mod alloc_tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn from_ip_address_ref_for_ip_address_test() {
         {
             let (ip_address, ip_address_octets) = ("127.0.0.1", [127, 0, 0, 1]);
@@ -1325,6 +1345,7 @@ mod alloc_tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn from_ip_address_for_ip_address_ref_test() {
         {
             let ip_address = IpAddr::V4(String::from("127.0.0.1"), [127, 0, 0, 1]);
@@ -1349,11 +1370,13 @@ mod alloc_tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn display_invalid_ip_address_error_test() {
         assert_eq!(AddrParseError.to_string(), String::from("AddrParseError"),)
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn ip_address_ref_to_owned_test() {
         {
             assert_eq!(
@@ -1377,6 +1400,7 @@ mod alloc_tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn ip_address_from_std_net_ipaddr_test() {
         let ip_addresses = vec![
             (
@@ -1397,6 +1421,7 @@ mod alloc_tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn ipv6_to_uncompressed_string_test() {
         let ip_addresses = vec![
             (
@@ -1525,6 +1550,7 @@ mod alloc_tests {
 
     #[cfg(feature = "std")]
     #[test]
+    #[wasm_bindgen_test]
     fn presented_matches_constraint_test() {
         use std::boxed::Box;
         use std::net::IpAddr;

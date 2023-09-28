@@ -40,7 +40,7 @@ impl<'a, T: FromDer<'a>> Iterator for DerIterator<'a, T> {
     }
 }
 
-pub(crate) trait FromDer<'a>: Sized + 'a {
+pub trait FromDer<'a>: Sized + 'a {
     /// Parse a value of type `Self` from the given DER-encoded input.
     fn from_der(reader: &mut untrusted::Reader<'a>) -> Result<Self, Error>;
 
@@ -419,8 +419,12 @@ macro_rules! oid {
 #[cfg(test)]
 mod tests {
     use super::DerTypeId;
+    use wasm_bindgen_test::*;
+
+    wasm_bindgen_test_configure!(run_in_browser);
 
     #[test]
+    #[wasm_bindgen_test]
     fn test_optional_boolean() {
         use super::{Error, FromDer};
 
@@ -444,6 +448,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn test_bit_string_with_no_unused_bits() {
         use super::{bit_string_with_no_unused_bits, Error};
 
@@ -486,6 +491,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn read_tag_and_get_value_default_limit() {
         use super::{read_tag_and_get_value, Error};
 
@@ -508,6 +514,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn read_tag_and_get_value_limited_high_form() {
         use super::{read_tag_and_get_value_limited, Error, LONG_FORM_LEN_TWO_BYTES_MAX};
 
@@ -520,6 +527,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn read_tag_and_get_value_limited_non_canonical() {
         use super::{read_tag_and_get_value_limited, Error, LONG_FORM_LEN_TWO_BYTES_MAX};
 
@@ -545,6 +553,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     #[cfg(feature = "alloc")]
     fn read_tag_and_get_value_limited_limits() {
         use super::{read_tag_and_get_value_limited, Error};
@@ -634,6 +643,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn misencoded_bit_string_flags() {
         use super::{bit_string_flags, Error};
 
@@ -657,6 +667,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn valid_bit_string_flags() {
         use super::bit_string_flags;
 
@@ -681,6 +692,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn test_small_nonnegative_integer() {
         use super::{Error, FromDer, Tag};
 

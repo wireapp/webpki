@@ -1,5 +1,9 @@
 // Copyright 2014-2017 Brian Smith.
 
+use wasm_bindgen_test::*;
+
+wasm_bindgen_test_configure!(run_in_browser);
+
 // (name, is_valid)
 static DNS_NAME_VALIDITY: &[(&[u8], bool)] = &[
     (b"a", true),
@@ -393,6 +397,7 @@ static IP_ADDRESS_DNS_VALIDITY: &[(&[u8], bool)] = &[
 ];
 
 #[test]
+#[wasm_bindgen_test]
 fn dns_name_ref_try_from_ascii_test() {
     for &(s, is_valid) in DNS_NAME_VALIDITY
         .iter()

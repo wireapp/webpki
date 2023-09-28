@@ -1,11 +1,9 @@
-#![cfg(any(feature = "ring", feature = "aws_lc_rs"))]
+#![cfg(any(feature = "ring", feature = "aws_lc_rs", feature = "rust_crypto"))]
 
 use core::time::Duration;
 use std::collections::HashMap;
-use std::fs::File;
 
 use base64::{engine::general_purpose, Engine as _};
-use bzip2::read::BzDecoder;
 use pki_types::UnixTime;
 use serde::Deserialize;
 
@@ -14,14 +12,21 @@ use webpki::{extract_trust_anchor, KeyUsage, SubjectNameRef};
 
 // All of the BetterTLS testcases use P256 keys.
 static ALGS: &[&dyn SignatureVerificationAlgorithm] = &[
+    #[cfg(feature = "rust_crypto")]
+        webpki::rust_crypto::alg::RUST_CRYPTO_ECDSA_P256_SHA256,
     #[cfg(feature = "ring")]
-    webpki::ring::ECDSA_P256_SHA256,
+        webpki::ring::ECDSA_P256_SHA256,
     #[cfg(feature = "aws_lc_rs")]
-    webpki::aws_lc_rs::ECDSA_P256_SHA256,
+        webpki::aws_lc_rs::ECDSA_P256_SHA256,
 ];
+
+use wasm_bindgen_test::*;
+
+wasm_bindgen_test_configure!(run_in_browser);
 
 #[ignore] // Runs slower than other unit tests - opt-in with `cargo test -- --ignored`
 #[test]
+#[wasm_bindgen_test]
 fn path_building() {
     let better_tls = testdata();
     let root_der = &better_tls.root_der();
@@ -41,6 +46,7 @@ fn path_building() {
 
 #[ignore] // Runs slower than other unit tests - opt-in with `cargo test -- --ignored`
 #[test]
+#[wasm_bindgen_test]
 fn name_constraints() {
     let better_tls = testdata();
     let root_der = &better_tls.root_der();
@@ -102,9 +108,12 @@ fn run_testsuite(suite_name: &str, suite: &BetterTlsSuite, roots: &[TrustAnchor]
 }
 
 fn testdata() -> BetterTls {
-    let mut data_file = File::open("third-party/bettertls/bettertls.tests.json.bz2")
-        .expect("failed to open data file");
-    let decompressor = BzDecoder::new(&mut data_file);
+    let data_file = include_bytes!("../third-party/bettertls/bettertls.tests.json.bz2");
+
+    #[cfg(not(target_family = "wasm"))]
+        let decompressor = bzip2::read::BzDecoder::new(&data_file[..]);
+    #[cfg(target_family = "wasm")]
+        let decompressor = bzip2_rs::DecoderReader::new(&data_file[..]);
 
     let better_tls: BetterTls = serde_json::from_reader(decompressor).expect("invalid test JSON");
     println!("Testing BetterTLS revision {:?}", better_tls.revision);

@@ -187,6 +187,9 @@ pub enum Error {
     /// algorithm and the signature algorithm simply don't match (e.g.
     /// verifying an RSA signature with an ECC public key).
     UnsupportedSignatureAlgorithmForPublicKey,
+
+    /// This might happen because the key size is incorrect
+    UnsupportedPublicKey,
 }
 
 impl Error {
@@ -227,7 +230,7 @@ impl Error {
 
             // Errors related to unsupported features.
             Error::UnsupportedCrlSignatureAlgorithmForPublicKey
-            | Error::UnsupportedSignatureAlgorithmForPublicKey => 150,
+            | Error::UnsupportedSignatureAlgorithmForPublicKey | Error::UnsupportedPublicKey => 150,
             Error::UnsupportedCrlSignatureAlgorithm | Error::UnsupportedSignatureAlgorithm => 140,
             Error::UnsupportedCriticalExtension => 130,
             Error::UnsupportedCertVersion => 130,

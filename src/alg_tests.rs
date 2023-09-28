@@ -26,6 +26,9 @@ use super::{
     UNSUPPORTED_SIGNATURE_ALGORITHM_FOR_RSA_KEY,
 };
 
+use wasm_bindgen_test::*;
+wasm_bindgen_test_configure!(run_in_browser);
+
 macro_rules! test_file_bytes {
     ( $file_name:expr ) => {
         include_bytes!(concat!(
@@ -40,6 +43,7 @@ macro_rules! test_file_bytes {
 macro_rules! test_verify_signed_data {
     ($fn_name:ident, $file_name:expr, $expected_result:expr) => {
         #[test]
+        #[wasm_bindgen_test]
         fn $fn_name() {
             test_verify_signed_data(test_file_bytes!($file_name), $expected_result);
         }
@@ -97,6 +101,7 @@ fn test_verify_signed_data(file_contents: &[u8], expected_result: Result<(), Err
 macro_rules! test_verify_signed_data_signature_outer {
     ($fn_name:ident, $file_name:expr, $expected_result:expr) => {
         #[test]
+        #[wasm_bindgen_test]
         fn $fn_name() {
             test_verify_signed_data_signature_outer(test_file_bytes!($file_name), $expected_result);
         }
@@ -120,6 +125,7 @@ fn test_verify_signed_data_signature_outer(file_contents: &[u8], expected_error:
 macro_rules! test_parse_spki_bad_outer {
     ($fn_name:ident, $file_name:expr, $error:expr) => {
         #[test]
+        #[wasm_bindgen_test]
         fn $fn_name() {
             test_parse_spki_bad_outer(test_file_bytes!($file_name), $error)
         }

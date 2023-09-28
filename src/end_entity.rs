@@ -180,11 +180,15 @@ impl<'a> Deref for EndEntityCert<'a> {
 mod tests {
     use super::*;
     use crate::test_utils;
+    use wasm_bindgen_test::*;
+
+    wasm_bindgen_test_configure!(run_in_browser);
 
     // This test reproduces https://github.com/rustls/webpki/issues/167 --- an
     // end-entity cert where the common name is a `PrintableString` rather than
     // a `UTF8String` cannot iterate over its subject alternative names.
     #[test]
+    #[wasm_bindgen_test]
     fn printable_string_common_name() {
         const DNS_NAME: &str = "test.example.com";
 
@@ -212,6 +216,7 @@ mod tests {
     // This test reproduces https://github.com/rustls/webpki/issues/167 --- an
     // end-entity cert where the common name is an empty SEQUENCE.
     #[test]
+    #[wasm_bindgen_test]
     fn empty_sequence_common_name() {
         let ee_cert_der = {
             // handcrafted cert DER produced using `ascii2der`, since `rcgen` is

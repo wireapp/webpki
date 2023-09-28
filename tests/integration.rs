@@ -12,17 +12,22 @@
 // ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 // OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-#![cfg(any(feature = "ring", feature = "aws_lc_rs"))]
+#![cfg(any(feature = "ring", feature = "aws_lc_rs", feature = "rust_crypto"))]
 
 use core::time::Duration;
 
 use pki_types::{CertificateDer, UnixTime};
 use webpki::{extract_trust_anchor, KeyUsage};
 
+use wasm_bindgen_test::*;
+
+wasm_bindgen_test_configure!(run_in_browser);
+
 /* Checks we can verify netflix's cert chain.  This is notable
  * because they're rooted at a Verisign v1 root. */
 #[cfg(feature = "alloc")]
 #[test]
+#[wasm_bindgen_test]
 fn netflix() {
     let ee: &[u8] = include_bytes!("netflix/ee.der");
     let inter = CertificateDer::from(&include_bytes!("netflix/inter.der")[..]);
@@ -50,6 +55,7 @@ fn netflix() {
 /* This is notable because it is a popular use of IP address subjectAltNames. */
 #[cfg(feature = "alloc")]
 #[test]
+#[wasm_bindgen_test]
 fn cloudflare_dns() {
     let ee: &[u8] = include_bytes!("cloudflare_dns/ee.der");
     let inter = CertificateDer::from(&include_bytes!("cloudflare_dns/inter.der")[..]);
@@ -107,6 +113,7 @@ fn cloudflare_dns() {
 
 #[cfg(feature = "alloc")]
 #[test]
+#[wasm_bindgen_test]
 fn wpt() {
     let ee = CertificateDer::from(&include_bytes!("wpt/ee.der")[..]);
     let ca = CertificateDer::from(&include_bytes!("wpt/ca.der")[..]);
@@ -129,6 +136,7 @@ fn wpt() {
 }
 
 #[test]
+#[wasm_bindgen_test]
 fn ed25519() {
     let ee = CertificateDer::from(&include_bytes!("ed25519/ee.der")[..]);
     let ca = CertificateDer::from(&include_bytes!("ed25519/ca.der")[..]);
@@ -152,6 +160,7 @@ fn ed25519() {
 }
 
 #[test]
+#[wasm_bindgen_test]
 #[cfg(feature = "alloc")]
 fn critical_extensions() {
     let root = CertificateDer::from(&include_bytes!("critical_extensions/root-cert.der")[..]);
@@ -193,18 +202,21 @@ fn critical_extensions() {
 }
 
 #[test]
+#[wasm_bindgen_test]
 fn read_root_with_zero_serial() {
     let ca = CertificateDer::from(&include_bytes!("misc/serial_zero.der")[..]);
     extract_trust_anchor(&ca).expect("godaddy cert should parse as anchor");
 }
 
 #[test]
+#[wasm_bindgen_test]
 fn read_root_with_neg_serial() {
     let ca = CertificateDer::from(&include_bytes!("misc/serial_neg.der")[..]);
     extract_trust_anchor(&ca).expect("idcat cert should parse as anchor");
 }
 
 #[test]
+#[wasm_bindgen_test]
 #[cfg(feature = "alloc")]
 fn read_ee_with_neg_serial() {
     let ca = CertificateDer::from(&include_bytes!("misc/serial_neg_ca.der")[..]);
@@ -229,6 +241,7 @@ fn read_ee_with_neg_serial() {
 }
 
 #[test]
+#[wasm_bindgen_test]
 #[cfg(feature = "alloc")]
 fn read_ee_with_large_pos_serial() {
     let ee = CertificateDer::from(&include_bytes!("misc/serial_large_positive.der")[..]);
@@ -237,6 +250,7 @@ fn read_ee_with_large_pos_serial() {
 }
 
 #[test]
+#[wasm_bindgen_test]
 fn list_netflix_names() {
     expect_cert_dns_names(
         include_bytes!("netflix/ee.der"),
@@ -258,6 +272,7 @@ fn list_netflix_names() {
 }
 
 #[test]
+#[wasm_bindgen_test]
 fn invalid_subject_alt_names() {
     expect_cert_dns_names(
         // same as netflix ee certificate, but with the last name in the list
@@ -281,6 +296,7 @@ fn invalid_subject_alt_names() {
 }
 
 #[test]
+#[wasm_bindgen_test]
 fn wildcard_subject_alternative_names() {
     expect_cert_dns_names(
         // same as netflix ee certificate, but with the last name in the list
@@ -304,6 +320,7 @@ fn wildcard_subject_alternative_names() {
 }
 
 #[test]
+#[wasm_bindgen_test]
 fn no_subject_alt_names() {
     expect_cert_dns_names(include_bytes!("misc/no_subject_alternative_name.der"), [])
 }

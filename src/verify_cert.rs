@@ -696,13 +696,18 @@ pub(crate) enum Role {
     EndEntity,
 }
 
-#[cfg(all(test, feature = "alloc", any(feature = "ring", feature = "aws_lc_rs")))]
+#[cfg(all(test, feature = "alloc"))]
 mod tests {
     use super::*;
     use crate::test_utils::{issuer_params, make_end_entity, make_issuer};
     use crate::trust_anchor::extract_trust_anchor;
 
+    use wasm_bindgen_test::*;
+
+    wasm_bindgen_test_configure!(run_in_browser);
+
     #[test]
+    #[wasm_bindgen_test]
     fn eku_key_purpose_id() {
         assert!(ExtendedKeyUsage::RequiredIfPresent(EKU_SERVER_AUTH)
             .key_purpose_id_equals(EKU_SERVER_AUTH.oid_value))
@@ -756,6 +761,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn test_too_many_signatures() {
         assert!(matches!(
             build_degenerate_chain(5, ChainTrustAnchor::NotInChain),
@@ -764,6 +770,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn test_too_many_path_calls() {
         assert!(matches!(
             dbg!(build_degenerate_chain(10, ChainTrustAnchor::InChain)),
@@ -830,6 +837,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn longest_allowed_path() {
         assert!(build_linear_chain(1).is_ok());
         assert!(build_linear_chain(2).is_ok());
@@ -840,6 +848,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn path_too_long() {
         assert!(matches!(
             build_linear_chain(7),
@@ -848,6 +857,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn name_constraint_budget() {
         // Issue a trust anchor that imposes name constraints. The constraint should match
         // the end entity certificate SAN.
@@ -931,6 +941,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(not(target_family = "wasm"))]
     fn test_reject_candidate_path() {
         /*
          This test builds a PKI like the following diagram depicts. We first verify

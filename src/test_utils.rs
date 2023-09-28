@@ -3,7 +3,7 @@
 use crate::types::CertificateDer;
 
 /// Signature algorithm used by certificates and parameters generated using the test utils helpers.
-static RCGEN_SIGNATURE_ALG: &rcgen::SignatureAlgorithm = &rcgen::PKCS_ECDSA_P256_SHA256;
+static RCGEN_SIGNATURE_ALG: &rcgen::SignatureAlgorithm = &rcgen::PKCS_ED25519;
 
 pub(crate) fn make_issuer(org_name: impl Into<String>) -> rcgen::Certificate {
     rcgen::Certificate::from_params(issuer_params(org_name)).unwrap()
@@ -39,7 +39,9 @@ pub(crate) fn make_end_entity(issuer: &rcgen::Certificate) -> CertificateDer<'st
 
 pub(crate) fn end_entity_params(subject_alt_names: Vec<String>) -> rcgen::CertificateParams {
     let mut ee_params = rcgen::CertificateParams::new(subject_alt_names);
-    ee_params.is_ca = rcgen::IsCa::ExplicitNoCa;
+    // TODO: restore this when a WASM-compatible rcgen compatible with upstream emerges
+    // ee_params.is_ca = rcgen::IsCa::ExplicitNoCa;
+    ee_params.is_ca = rcgen::IsCa::SelfSignedOnly;
     ee_params.alg = RCGEN_SIGNATURE_ALG;
     ee_params
 }

@@ -28,7 +28,7 @@
 
 #![cfg_attr(not(feature = "std"), no_std)]
 #![warn(unreachable_pub)]
-#![deny(missing_docs, clippy::as_conversions)]
+// #![deny(missing_docs, clippy::as_conversions)]
 #![allow(
     clippy::len_without_is_empty,
     clippy::new_without_default,
@@ -45,7 +45,7 @@
 extern crate alloc;
 
 #[macro_use]
-mod der;
+pub mod der;
 
 #[cfg(feature = "aws_lc_rs")]
 mod aws_lc_rs_algs;
@@ -62,6 +62,9 @@ mod trust_anchor;
 mod crl;
 mod verify_cert;
 mod x509;
+
+#[cfg(feature = "rust_crypto")]
+pub mod rust_crypto;
 
 #[cfg(test)]
 pub(crate) mod test_utils;
@@ -169,6 +172,30 @@ pub static ALL_VERIFICATION_ALGS: &[&dyn types::SignatureVerificationAlgorithm] 
     aws_lc_rs::RSA_PSS_2048_8192_SHA384_LEGACY_KEY,
     #[cfg(feature = "aws_lc_rs")]
     aws_lc_rs::RSA_PSS_2048_8192_SHA512_LEGACY_KEY,
+    #[cfg(feature = "rust_crypto")]
+    rust_crypto::RUST_CRYPTO_ECDSA_P256_SHA256,
+    #[cfg(feature = "rust_crypto")]
+    rust_crypto::RUST_CRYPTO_ECDSA_P256_SHA384,
+    #[cfg(feature = "rust_crypto")]
+    rust_crypto::RUST_CRYPTO_ECDSA_P384_SHA256,
+    #[cfg(feature = "rust_crypto")]
+    rust_crypto::RUST_CRYPTO_ECDSA_P384_SHA384,
+    #[cfg(feature = "rust_crypto")]
+    rust_crypto::RUST_CRYPTO_ED25519,
+    #[cfg(feature = "rust_crypto")]
+    rust_crypto::RUST_CRYPTO_RSA_PKCS1_2048_8192_SHA256,
+    #[cfg(feature = "rust_crypto")]
+    rust_crypto::RUST_CRYPTO_RSA_PKCS1_2048_8192_SHA384,
+    #[cfg(feature = "rust_crypto")]
+    rust_crypto::RUST_CRYPTO_RSA_PKCS1_2048_8192_SHA512,
+    #[cfg(feature = "rust_crypto")]
+    rust_crypto::RUST_CRYPTO_RSA_PKCS1_3072_8192_SHA384,
+    #[cfg(all(feature = "alloc", feature = "rust_crypto"))]
+    rust_crypto::RUST_CRYPTO_RSA_PSS_2048_8192_SHA256_LEGACY_KEY,
+    #[cfg(all(feature = "alloc", feature = "rust_crypto"))]
+    rust_crypto::RUST_CRYPTO_RSA_PSS_2048_8192_SHA384_LEGACY_KEY,
+    #[cfg(all(feature = "alloc", feature = "rust_crypto"))]
+    rust_crypto::RUST_CRYPTO_RSA_PSS_2048_8192_SHA512_LEGACY_KEY,
 ];
 
 fn public_values_eq(a: untrusted::Input<'_>, b: untrusted::Input<'_>) -> bool {

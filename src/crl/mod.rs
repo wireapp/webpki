@@ -299,8 +299,12 @@ mod tests {
     use super::*;
     use crate::end_entity::EndEntityCert;
     use crate::verify_cert::PartialPath;
+    use wasm_bindgen_test::*;
+
+    wasm_bindgen_test_configure!(run_in_browser);
 
     #[test]
+    #[wasm_bindgen_test]
     // safe to convert BorrowedCertRevocationList to CertRevocationList.
     // redundant clone, clone_on_copy allowed to verify derived traits.
     #[allow(clippy::as_conversions, clippy::redundant_clone, clippy::clone_on_copy)]
@@ -380,6 +384,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn test_crl_authoritative_issuer_mismatch() {
         let crl = include_bytes!("../../tests/crls/crl.valid.der");
         let crl = BorrowedCertRevocationList::from_der(&crl[..]).unwrap();
@@ -395,6 +400,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn test_crl_authoritative_no_idp_no_cert_dp() {
         let crl =
             include_bytes!("../../tests/client_auth_revocation/ee_revoked_crl_ku_ee_depth.crl.der");

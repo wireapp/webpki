@@ -612,6 +612,10 @@ fn is_valid_dns_id(
 mod tests {
     use super::*;
 
+    use wasm_bindgen_test::*;
+
+    wasm_bindgen_test_configure!(run_in_browser);
+
     #[allow(clippy::type_complexity)]
     const PRESENTED_MATCHES_REFERENCE: &[(&[u8], &[u8], Result<bool, Error>)] = &[
         (b"", b"a", Err(Error::MalformedDnsIdentifier)),
@@ -974,6 +978,7 @@ mod tests {
     ];
 
     #[test]
+    #[wasm_bindgen_test]
     fn presented_matches_reference_test() {
         for &(presented, reference, expected_result) in PRESENTED_MATCHES_REFERENCE {
             let actual_result = presented_id_matches_reference_id(
@@ -1051,6 +1056,7 @@ mod tests {
     ];
 
     #[test]
+    #[wasm_bindgen_test]
     fn presented_matches_constraint_test() {
         for &(presented, constraint, expected_result) in PRESENTED_MATCHES_CONSTRAINT {
             let actual_result = presented_id_matches_reference_id(

@@ -839,8 +839,12 @@ mod tests {
     use crate::cert::Cert;
     use crate::end_entity::EndEntityCert;
     use crate::verify_cert::PartialPath;
+    use wasm_bindgen_test::*;
+
+    wasm_bindgen_test_configure!(run_in_browser);
 
     #[test]
+    #[wasm_bindgen_test]
     fn parse_issuing_distribution_point_ext() {
         let crl = include_bytes!("../../tests/crls/crl.idp.valid.der");
         let crl = BorrowedCertRevocationList::from_der(&crl[..]).unwrap();
@@ -893,6 +897,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn test_issuing_distribution_point_only_user_certs() {
         let crl = include_bytes!("../../tests/crls/crl.idp.only_user_certs.der");
         let crl = BorrowedCertRevocationList::from_der(&crl[..]).unwrap();
@@ -923,6 +928,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn test_issuing_distribution_point_only_ca_certs() {
         let crl = include_bytes!("../../tests/crls/crl.idp.only_ca_certs.der");
         let crl = BorrowedCertRevocationList::from_der(&crl[..]).unwrap();
@@ -949,6 +955,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn test_issuing_distribution_point_indirect() {
         let crl = include_bytes!("../../tests/crls/crl.idp.indirect_crl.der");
         // We should encounter an error parsing a CRL with an IDP extension that indicates it's an
@@ -958,6 +965,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn test_issuing_distribution_only_attribute_certs() {
         let crl = include_bytes!("../../tests/crls/crl.idp.only_attribute_certs.der");
         // We should find an error when we parse a CRL with an IDP extension that indicates it only
@@ -967,6 +975,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn test_issuing_distribution_only_some_reasons() {
         let crl = include_bytes!("../../tests/crls/crl.idp.only_some_reasons.der");
         // We should encounter an error parsing a CRL with an IDP extension that indicates it's
@@ -979,6 +988,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn test_issuing_distribution_invalid_bool() {
         // Created w/
         //   ascii2der -i tests/crls/crl.idp.invalid.bool.der.txt -o tests/crls/crl.idp.invalid.bool.der
@@ -989,6 +999,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn test_issuing_distribution_explicit_false_bool() {
         // Created w/
         //   ascii2der -i tests/crls/crl.idp.explicit.false.bool.der.txt -o tests/crls/crl.idp.explicit.false.bool.der
@@ -1003,6 +1014,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn test_issuing_distribution_unknown_tag() {
         // Created w/
         //   ascii2der -i tests/crls/crl.idp.unknown.tag.der.txt -o tests/crls/crl.idp.unknown.tag.der
@@ -1013,6 +1025,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn test_issuing_distribution_invalid_name() {
         // Created w/
         //   ascii2der -i tests/crls/crl.idp.invalid.name.der.txt -o tests/crls/crl.idp.invalid.name.der
@@ -1024,6 +1037,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn test_issuing_distribution_relative_name() {
         let crl = include_bytes!("../../tests/crls/crl.idp.name_relative_to_issuer.der");
         // We should encounter an error parsing a CRL with an issuing distribution point extension
@@ -1036,6 +1050,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn test_issuing_distribution_no_name() {
         let crl = include_bytes!("../../tests/crls/crl.idp.no_distribution_point_name.der");
         // We should encounter an error parsing a CRL with an issuing distribution point extension
@@ -1048,6 +1063,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     fn revocation_reasons() {
         // Test that we can convert the allowed u8 revocation reason code values into the expected
         // revocation reason variant.
@@ -1090,6 +1106,7 @@ mod tests {
     }
 
     #[test]
+    #[wasm_bindgen_test]
     // redundant clone, clone_on_copy allowed to verify derived traits.
     #[allow(clippy::redundant_clone, clippy::clone_on_copy)]
     fn test_derived_traits() {
