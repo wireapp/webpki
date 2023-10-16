@@ -111,6 +111,9 @@ pub struct BorrowedCertRevocationList<'a> {
     /// An optional CRL extension that identifies the CRL distribution point and scope for the CRL.
     issuing_distribution_point: Option<untrusted::Input<'a>>,
 
+    /// Optional CRL extension that pins the public key of a cert identifier
+    authority_key_identifier: Option<BorrowedAuthorityKeyIdentifier<'a>>,
+
     /// List of certificates revoked by the issuer in this CRL.
     revoked_certs: untrusted::Input<'a>,
 }
@@ -189,7 +192,12 @@ impl<'a> BorrowedCertRevocationList<'a> {
 
                 // id-ce-authorityKeyIdentifier 2.5.29.35 - RFC 5280 §5.2.1, §4.2.1.1
                 // We recognize the extension but don't retain its value for use.
-                35 => Ok(()),
+                35 => {
+                    self.authority_key_identifier = Some(BorrowedAuthorityKeyIdentifier::from_der(
+                        &mut untrusted::Reader::new(extension.value),
+                    )?);
+                    Ok(())
+                }
 
                 // Unsupported extension
                 _ => extension.unsupported(),
@@ -318,6 +326,7 @@ impl<'a> FromDer<'a> for BorrowedCertRevocationList<'a> {
                 issuer,
                 revoked_certs,
                 issuing_distribution_point: None,
+                authority_key_identifier: None,
             };
 
             // RFC 5280 §5.1.2.7:
@@ -828,6 +837,63 @@ impl TryFrom<u8> for RevocationReason {
             _ => Err(Error::UnsupportedRevocationReason),
         }
     }
+}
+
+///     authorityCertIssuer [1] GeneralNames OPTIONAL,
+///     authorityCertSerialNumber [2] CertificateSerialNumber OPTIONAL,
+/// https://datatracker.ietf.org/doc/html/rfc5280#section-4.2.1.1
+#[derive(Debug, Clone, Copy)]
+pub struct BorrowedAuthorityKeyIdentifierAuthorityCert<'a> {
+    /// Sequence of GeneralName
+    pub(crate) authority_cert_issuer: &'a [GeneralName<'a>],
+    /// AuthorityCertSerialNumber is an INTEGER
+    pub(crate) authority_cert_serial_number: untrusted::Input<'a>,
+}
+
+/// ```ignore
+/// authorityKeyIdentifier EXTENSION ::= {
+///     SYNTAX AuthorityKeyIdentifier
+///     IDENTIFIED BY id-ce-authorityKeyIdentifier
+/// }
+///
+/// AuthorityKeyIdentifier ::= SEQUENCE {
+///     keyIdentifier   [0] KeyIdentifier OPTIONAL,
+///     authorityCertIssuer [1] GeneralNames OPTIONAL,
+///     authorityCertSerialNumber [2] CertificateSerialNumber OPTIONAL,
+/// } (WITH COMPONENTS {..., authorityCertIssuer PRESENT,
+///             authorityCertSerialNumber PRESENT} |
+///    WITH COMPONENTS {..., authorityCertIssuer ABSENT,
+///             authorityCertSerialNumber ABSENT} )
+///
+/// KeyIdentifier ::= OCTET STRING
+/// ```
+///
+/// https://datatracker.ietf.org/doc/html/rfc5280#section-4.2.1.1
+#[derive(Debug, Clone, Copy)]
+pub struct BorrowedAuthorityKeyIdentifier<'a> {
+    /// The KeyIdentifier is an OCTET STRING
+    pub(crate) key_identifier: Option<&'a [u8]>,
+    /// This takes this shape because of the requirement that either both AuthorityCert* options are present or none of them
+    pub(crate) authority_cert: Option<BorrowedAuthorityKeyIdentifierAuthorityCert<'a>>,
+}
+
+impl<'a> FromDer<'a> for BorrowedAuthorityKeyIdentifier<'a> {
+    fn from_der(reader: &mut untrusted::Reader<'a>) -> Result<Self, Error> {
+        // TODO: Finish DER decoding of AKI
+        // der::nested(
+        //     reader,
+        //     Tag::Sequence,
+        //     Error::TrailingData(DerTypeId::AuthorityKeyIdentifier),
+        //     |der| {
+
+        //         let authority_cert_serial_number = lenient_certificate_serial_number(der)?;
+        //     },
+        // )
+
+        todo!()
+    }
+
+    const TYPE_ID: DerTypeId = DerTypeId::AuthorityKeyIdentifier;
 }
 
 #[cfg(feature = "alloc")]

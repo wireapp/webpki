@@ -250,7 +250,7 @@ impl<'a> Iterator for NameIterator<'a> {
 // don't even store the value. Also, the meaning of a `GeneralName` in a name
 // constraint is different than the meaning of the identically-represented
 // `GeneralName` in other contexts.
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub(crate) enum GeneralName<'a> {
     DnsName(untrusted::Input<'a>),
     DirectoryName(untrusted::Input<'a>),
