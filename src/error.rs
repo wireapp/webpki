@@ -230,7 +230,8 @@ impl Error {
 
             // Errors related to unsupported features.
             Error::UnsupportedCrlSignatureAlgorithmForPublicKey
-            | Error::UnsupportedSignatureAlgorithmForPublicKey | Error::UnsupportedPublicKey => 150,
+            | Error::UnsupportedSignatureAlgorithmForPublicKey
+            | Error::UnsupportedPublicKey => 150,
             Error::UnsupportedCrlSignatureAlgorithm | Error::UnsupportedSignatureAlgorithm => 140,
             Error::UnsupportedCriticalExtension => 130,
             Error::UnsupportedCertVersion => 130,
@@ -332,4 +333,5 @@ pub enum DerTypeId {
     RevokedCertificateExtension,
     RevokedCertEntry,
     IssuingDistributionPoint,
+    AuthorityKeyIdentifier,
 }
